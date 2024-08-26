@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{ post.title }}</h1>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Post image" class="img-fluid">
+            {% endif %}
+            <p>{{ post.content }}</p>
+            {% if post.author %}
+                <p>Posted by: {{ post.author }}</p>
+            {% else %}
+                <p>Posted anonymously</p>
+            {% endif %}
+            <p>Published on: {{ post.created_at }}</p>
+            {% if user.username == post.author %}
+                <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit Post</a>
+                <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Delete Post</a>
+            {% endif %}
+            <h2><br><br></br></br>Comments</h2>
+            <div class="card">
+                <div class="card-body">
+                    {% for comment in comments %}
+                        <div class="media mb-3">
+                            <div class="media-body">
+                                <p>{{ comment.content }}</p>
+                                <small>
+                                    {% if comment.author %}
+                                        Posted by: {{ comment.author }}
+                                    {% else %}
+                                        Posted anonymously
+                                    {% endif %}
+                                    on {{ comment.created_at }}
+                                </small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <h3>Add a comment</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" class="btn btn-success">Add Comment</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
